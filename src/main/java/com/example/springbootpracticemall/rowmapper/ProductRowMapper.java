@@ -1,7 +1,7 @@
 package com.example.springbootpracticemall.rowmapper;
 
 import com.example.springbootpracticemall.constant.ProductCategory;
-import com.example.springbootpracticemall.model.Product;
+import com.example.springbootpracticemall.model.entity.Product;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

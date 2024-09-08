@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <!-- 引入Bootstrap CSS -->
+  <link href="css/styles.css" rel="stylesheet" />
+  <!-- 自定義CSS -->
+  <style>
+    .container {
+      max-width: 500px;
+      margin-top: 50px;
+    }
+    .text-danger {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2 class="text-center">Create account</h2>
+  <form id="registerForm">
+    <div class="mb-3">
+      <label for="userName" class="form-label">Username</label>
+      <input type="text" class="form-control" id="userName" name="userName" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <div class="mb-3">
+      <label for="confirmPassword" class="form-label">Confirm Password</label>
+      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+      <div id="passwordError" class="text-danger">
+        Passwords do not match.
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Register</button>
+  </form>
+</div>
+
+<!-- 引入Bootstrap JS和依賴的Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+<!-- 密碼驗證的JavaScript -->
+<script>
+  document.getElementById('confirmPassword').addEventListener('input', function() {
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirmPassword').value;
+    var passwordError = document.getElementById('passwordError');
+
+    if (password !== confirmPassword) {
+      passwordError.style.display = 'block';
+    } else {
+      passwordError.style.display = 'none';
+    }
+  });
+
+  document.getElementById('registerForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // 防止表單直接提交
+
+    const userName = document.getElementById('userName').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (password !== confirmPassword) {
+      document.getElementById('passwordError').style.display = 'block';
+      return;
+    }
+
+    const requestData = {
+      userName: userName,
+      email: email,
+      password: password
+    };
+
+    fetch('/users/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    })
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                return response.json().then(error =>{
+                  throw new Error(error.message)
+                })
+              }
+            })
+            .then(data => {
+              alert('Registration successful!');
+              window.location.href = '/login.html'; // 註冊成功後跳轉到登入頁面
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Registration failed : ' + error.message);
+            });
+  });
+</script>
+</body>
+</html>

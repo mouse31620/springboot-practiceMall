@@ -1,14 +1,14 @@
 package com.example.springbootpracticemall.controller;
 
-import com.example.springbootpracticemall.dto.ProductRequest;
-import com.example.springbootpracticemall.model.Product;
+import com.example.springbootpracticemall.model.dto.ProductRequest;
+import com.example.springbootpracticemall.model.entity.Product;
 import com.example.springbootpracticemall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 public class ProductController {

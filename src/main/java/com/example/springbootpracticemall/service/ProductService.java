@@ -1,7 +1,7 @@
 package com.example.springbootpracticemall.service;
 
-import com.example.springbootpracticemall.dto.ProductRequest;
-import com.example.springbootpracticemall.model.Product;
+import com.example.springbootpracticemall.model.dto.ProductRequest;
+import com.example.springbootpracticemall.model.entity.Product;
 
 public interface ProductService {
 

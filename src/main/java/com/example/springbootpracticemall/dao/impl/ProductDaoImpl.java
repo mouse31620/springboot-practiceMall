@@ -1,8 +1,8 @@
 package com.example.springbootpracticemall.dao.impl;
 
 import com.example.springbootpracticemall.dao.ProductDao;
-import com.example.springbootpracticemall.dto.ProductRequest;
-import com.example.springbootpracticemall.model.Product;
+import com.example.springbootpracticemall.model.dto.ProductRequest;
+import com.example.springbootpracticemall.model.entity.Product;
 import com.example.springbootpracticemall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
