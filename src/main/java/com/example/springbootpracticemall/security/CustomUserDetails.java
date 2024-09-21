@@ -1,34 +1,42 @@
-package com.example.springbootpracticemall.model;
+package com.example.springbootpracticemall.security;
 
+import com.example.springbootpracticemall.model.entity.Role;
 import com.example.springbootpracticemall.model.entity.User;
+import com.example.springbootpracticemall.util.Common;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
 public class CustomUserDetails implements UserDetails {
 
-    private Integer id;
+    private String id;
     private String username;
     private String password;
     private String email;
+    private Set<Role> roles;
+    private String customerType;
 
     public CustomUserDetails(User user) {
-        this.id = user.getId();
+        this.id = Common.get(user.getId());
         this.username = user.getUserName();
         this.password = user.getPassword();
         this.email = user.getEmail();
+        this.roles = user.getUserRoles();
+        this.customerType = user.getCustomerType().getTypeName();
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE" + role.getRoleName()))
+                .toList();
     }
 
-    public Integer getId() {
-        return id;
-    }
+    public String getId() { return id;}
+
+    public String getCustomerType() { return customerType;}
 
     public String getEmail() {
         return email;

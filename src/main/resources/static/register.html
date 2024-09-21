@@ -50,9 +50,9 @@
 <!-- 密碼驗證的JavaScript -->
 <script>
   document.getElementById('confirmPassword').addEventListener('input', function() {
-    var password = document.getElementById('password').value;
-    var confirmPassword = document.getElementById('confirmPassword').value;
-    var passwordError = document.getElementById('passwordError');
+    let password = document.getElementById('password').value;
+    let confirmPassword = document.getElementById('confirmPassword').value;
+    let passwordError = document.getElementById('passwordError');
 
     if (password !== confirmPassword) {
       passwordError.style.display = 'block';

@@ -99,7 +99,11 @@
                 }
             })
             .then(data => {
-                alert('login successful!');
+                alert(data.userName +' : login successful!');
+                const jwt = data.jwt;
+                const userInfo = { userName:data.userName, customerType:data.customerType};
+                document.cookie = `jwt=${jwt}; path=/; max-age=3600`;
+                document.cookie = `userInfo=${encodeURIComponent(JSON.stringify(userInfo))}; path=/; max-age=3600`;
                 window.location.href = '/index.html'; // 登入成功後跳轉到註冊頁面
             })
             .catch(error => {

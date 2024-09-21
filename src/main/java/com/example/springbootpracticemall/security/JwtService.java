@@ -1,12 +1,11 @@
 package com.example.springbootpracticemall.security;
 
-import com.example.springbootpracticemall.model.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.servlet.http.HttpServletRequest;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
@@ -34,6 +33,7 @@ public class JwtService {
                 .expiration(new Date(expirationMillis))
                 .add("email", user.getEmail())
                 .add("username", user.getUsername())
+                .add("customerType", user.getCustomerType())
                 .add("authorities", user.getAuthorities())
                 .build();
 

@@ -4,7 +4,12 @@ package com.example.springbootpracticemall.service.impl;
 import com.example.springbootpracticemall.model.dto.UserDto;
 import com.example.springbootpracticemall.model.dto.UserLoginRequest;
 import com.example.springbootpracticemall.model.dto.UserRegisterRequest;
+import com.example.springbootpracticemall.model.entity.CustomerType;
+import com.example.springbootpracticemall.model.entity.Role;
 import com.example.springbootpracticemall.model.entity.User;
+import com.example.springbootpracticemall.parameter.RoleType;
+import com.example.springbootpracticemall.repository.CustomerTypeRepository;
+import com.example.springbootpracticemall.repository.RoleRepository;
 import com.example.springbootpracticemall.repository.UserRepository;
 import com.example.springbootpracticemall.service.UserService;
 import org.slf4j.Logger;
@@ -28,6 +33,12 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private CustomerTypeRepository customerTypeRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -43,23 +54,13 @@ public class UserServiceImpl implements UserService {
         Date now = new Date();
         newUser.setCreatedDate(now);
         newUser.setLastModifiedDate(now);
-        newUser.setUserRole(1);
+        Role commonUserRole = roleRepository.findByRoleName(RoleType.COMMON_USER.getTypeName())
+                        .orElseThrow(() -> new RuntimeException("角色 COMMON_USER 未找到"));
+        newUser.getUserRoles().add(commonUserRole);
+        CustomerType customerType = customerTypeRepository.findByTypeName(com.example.springbootpracticemall.parameter.CustomerType.REGULAR.getType())
+                .orElseThrow(() -> new RuntimeException("顧客種類 REGULAR 未找到"));
+        newUser.setCustomerType(customerType);
         newUser = userRepository.save(newUser);
         return newUser;
-    }
-
-    @Override
-    public User login(UserLoginRequest userLoginRequest) {
-        User user = userRepository.findUserByEmail(userLoginRequest.getEmail())
-                .orElseThrow(() -> {
-                    logger.warn("該email{}未註冊", userLoginRequest.getEmail());
-                    return new ResponseStatusException(HttpStatus.BAD_REQUEST);
-                });
-        if (user.getPassword().equals(passwordEncoder.encode(userLoginRequest.getPassword()))){
-            return user;
-        } else {
-            logger.warn("email{}的密碼不正確", userLoginRequest.getEmail());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "密碼不正確");
-        }
     }
 }
