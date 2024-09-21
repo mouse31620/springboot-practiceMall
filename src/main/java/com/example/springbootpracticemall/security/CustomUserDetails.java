@@ -12,12 +12,12 @@ import java.util.Set;
 
 public class CustomUserDetails implements UserDetails {
 
-    private String id;
-    private String username;
-    private String password;
-    private String email;
-    private Set<Role> roles;
-    private String customerType;
+    private final String id;
+    private final String username;
+    private final String password;
+    private final String email;
+    private final Set<Role> roles;
+    private final String customerType;
 
     public CustomUserDetails(User user) {
         this.id = Common.get(user.getId());

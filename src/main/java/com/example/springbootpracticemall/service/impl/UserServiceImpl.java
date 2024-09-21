@@ -1,8 +1,6 @@
 package com.example.springbootpracticemall.service.impl;
 
 
-import com.example.springbootpracticemall.model.dto.UserDto;
-import com.example.springbootpracticemall.model.dto.UserLoginRequest;
 import com.example.springbootpracticemall.model.dto.UserRegisterRequest;
 import com.example.springbootpracticemall.model.entity.CustomerType;
 import com.example.springbootpracticemall.model.entity.Role;
