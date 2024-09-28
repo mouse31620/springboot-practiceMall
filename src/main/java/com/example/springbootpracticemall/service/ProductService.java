@@ -1,11 +1,18 @@
 package com.example.springbootpracticemall.service;
 
+import com.example.springbootpracticemall.model.dto.ProductQueryParam;
 import com.example.springbootpracticemall.model.dto.ProductRequest;
 import com.example.springbootpracticemall.model.entity.Product;
 
+import java.util.List;
+
 public interface ProductService {
 
-    Product getProductById(Integer productId);
+    Product getProductById(Long productId);
 
-    Integer createProduct(ProductRequest productRequest);
+    List<Product> getProducts(ProductQueryParam param);
+
+    Product createProduct(ProductRequest productRequest);
+
+    long getProductsCount(ProductQueryParam param);
 }

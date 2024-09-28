@@ -1,89 +1,35 @@
 package com.example.springbootpracticemall.model.entity;
 
-import com.example.springbootpracticemall.constant.ProductCategory;
+import com.example.springbootpracticemall.parameter.ProductCategory;
+import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
 
+@Data
+@Entity
+@Table(name = "product")
 public class Product {
-    private Integer productId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
+    private Long id;
+    @Column(name = "product_name")
     private String productName;
+    @Column(name = "category")
     private ProductCategory category;
+    @Column(name = "image_url")
     private String imageUrl;
+    @Column(name = "price")
     private Integer price;
+    @Column(name = "stock")
     private Integer stock;
+    @Column(name = "description")
     private String description;
+    @Column(name = "create_date")
     private Date createDate;
+    @Column(name = "last_modified_date")
     private Date lastModifiedDate;
 
-    public Integer getProductId() {
-        return productId;
-    }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public ProductCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(ProductCategory category) {
-        this.category = category;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 }

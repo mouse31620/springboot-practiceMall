@@ -1,4 +1,4 @@
-package com.example.springbootpracticemall.constant;
+package com.example.springbootpracticemall.parameter;
 
 public enum ProductCategory {
     FOOD,

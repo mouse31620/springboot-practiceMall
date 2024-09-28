@@ -75,8 +75,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Logged out successfully");
     }
 
-    @GetMapping("/who-am-i")
-    public ResponseEntity<?> whoAmI(HttpServletRequest request){
+    @GetMapping("/profile")
+    public ResponseEntity<?> profile(HttpServletRequest request){
         Optional<String> jwtOption = CookieUtil.getCookieValue(request, JWT);
         if (jwtOption.isPresent()){
             String jwt = jwtOption.get();
