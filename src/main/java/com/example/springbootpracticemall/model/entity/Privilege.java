@@ -2,6 +2,7 @@ package com.example.springbootpracticemall.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -18,7 +19,10 @@ public class Privilege {
     private Long id;
     @Column(name = "privilege_name", nullable = false, unique = true)
     String privilegeName;
-    @ManyToMany(mappedBy = "privileges")
+    @Column(name = "privilege_chinese")
+    String privilegeChinese;
+    @ManyToMany(mappedBy = "privileges", fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
     private Set<Role> roles = new HashSet<>();
     @Column(name = "created_date")
     private Date createdDate;

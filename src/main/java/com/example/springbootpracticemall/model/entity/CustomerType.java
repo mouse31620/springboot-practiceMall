@@ -18,6 +18,8 @@ public class CustomerType {
     private Long id;
     @Column(name = "type_name", nullable = false, unique = true)
     private String typeName;
+    @Column(name = "type_chinese")
+    private String typeChinese;
     @OneToMany(mappedBy = "customerType")
     private Set<User> users = new HashSet<>();
     @Column(name = "created_date")

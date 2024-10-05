@@ -11,7 +11,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,8 +35,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getProducts(ProductQueryParam param) {
         QProduct product = QProduct.product;
-        BooleanExpression namePredicate = (param.getSearch() != null) ? product.productName.containsIgnoreCase(param.getSearch()) : null;
-        BooleanExpression categoryPredicate = (param.getCategory() != null) ? product.category.eq(param.getCategory()) : null;
+        BooleanExpression namePredicate = (!"".equals(param.getSearch())) ? product.productName.containsIgnoreCase(param.getSearch()) : null;
+        BooleanExpression categoryPredicate = (!"".equals(param.getCategory())) ? product.category.eq(param.getCategory()) : null;
 
         Order order = param.getSort().equalsIgnoreCase("asc") ? Order.ASC : Order.DESC;
         Path<String> orderByPath  =  Expressions.stringPath(product, param.getOrderBy());
@@ -62,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
         product.setStock(productRequest.getStock());
         product.setDescription(productRequest.getDescription());
         Date now = new Date();
-        product.setCreateDate(now);
+        product.setCreatedDate(now);
         product.setLastModifiedDate(now);
         productRepository.save(product);
         return product;
@@ -71,8 +70,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public long getProductsCount(ProductQueryParam param) {
         QProduct product = QProduct.product;
-        BooleanExpression namePredicate = (param.getSearch() != null) ? product.productName.containsIgnoreCase(param.getSearch()) : null;
-        BooleanExpression categoryPredicate = (param.getCategory() != null) ? product.category.eq(param.getCategory()) : null;
+        BooleanExpression namePredicate = (!"".equals(param.getSearch())) ? product.productName.containsIgnoreCase(param.getSearch()) : null;
+        BooleanExpression categoryPredicate = (!"".equals(param.getCategory())) ? product.category.eq(param.getCategory()) : null;
         Long count = jpaQueryFactory.select(product.count())
                 .from(product)
                 .where(namePredicate, categoryPredicate)

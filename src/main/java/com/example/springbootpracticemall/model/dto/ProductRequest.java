@@ -1,7 +1,5 @@
 package com.example.springbootpracticemall.model.dto;
 
-import com.example.springbootpracticemall.parameter.ProductCategory;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -12,7 +10,7 @@ public class ProductRequest {
     private String productName;
 
     @NotNull
-    private ProductCategory category;
+    private String category;
 
     @NotNull
     private String imageUrl;

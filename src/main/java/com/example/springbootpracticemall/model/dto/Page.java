@@ -8,8 +8,9 @@ import java.util.List;
 @Builder
 @Data
 public class Page<T> {
+    private Integer totalPages;
     private Integer pageSize;
     private Integer pageNumber;
-    private long total;
+    private long totalItems;
     private List<T> result;
 }

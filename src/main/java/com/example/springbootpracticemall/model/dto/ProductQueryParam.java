@@ -1,13 +1,13 @@
 package com.example.springbootpracticemall.model.dto;
 
-import com.example.springbootpracticemall.parameter.ProductCategory;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @Data
 public class ProductQueryParam extends BasicQueryParam {
-    private ProductCategory category;
+    private String category;
     private String search;
 }

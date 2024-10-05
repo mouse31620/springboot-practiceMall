@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         newUser.setLastModifiedDate(now);
         Role commonUserRole = roleRepository.findByRoleName(RoleType.COMMON_USER.getTypeName())
                         .orElseThrow(() -> new RuntimeException("角色 COMMON_USER 未找到"));
-        newUser.getUserRoles().add(commonUserRole);
+        newUser.setUserRole(commonUserRole);
         CustomerType customerType = customerTypeRepository.findByTypeName(com.example.springbootpracticemall.parameter.CustomerType.REGULAR.getType())
                 .orElseThrow(() -> new RuntimeException("顧客種類 REGULAR 未找到"));
         newUser.setCustomerType(customerType);

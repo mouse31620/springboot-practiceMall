@@ -4,8 +4,8 @@ import com.example.springbootpracticemall.model.dto.Page;
 import com.example.springbootpracticemall.model.dto.ProductQueryParam;
 import com.example.springbootpracticemall.model.dto.ProductRequest;
 import com.example.springbootpracticemall.model.entity.Product;
-import com.example.springbootpracticemall.parameter.ProductCategory;
 import com.example.springbootpracticemall.service.ProductService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
 import java.util.List;
-import java.util.Locale;
 
 @Validated
 @RestController
@@ -38,12 +35,12 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<Page<Product>> getProducts(
-            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String category,
             @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "create_date") String orderBy,
+            @RequestParam(defaultValue = "createdDate") String orderBy,
             @RequestParam(defaultValue = "desc") String sort,
             @RequestParam(defaultValue = "12") @Max(100) @Min(0) Integer pageSize,
-            @RequestParam(defaultValue = "0") @Min(0) Integer pageNumber
+            @RequestParam(defaultValue = "1") @Min(0) Integer pageNumber
             ) {
         ProductQueryParam productQueryParam = ProductQueryParam.builder()
                 .category(category)
@@ -56,10 +53,13 @@ public class ProductController {
 
         List<Product> productList = productService.getProducts(productQueryParam);
         long totalCount = productService.getProductsCount(productQueryParam);
+        //偷懶不換成double的無條件進位寫法
+        Integer totalPages = ((int)totalCount + pageSize - 1)/pageSize;
         Page<Product> page = Page.<Product>builder()
                 .pageSize(pageSize)
                 .pageNumber(pageNumber)
-                .total(totalCount)
+                .totalItems(totalCount)
+                .totalPages(totalPages)
                 .result(productList)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(page);

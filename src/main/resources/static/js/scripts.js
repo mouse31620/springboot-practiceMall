@@ -49,7 +49,7 @@ function updateCartDisplay() {
 
 function addToCart(productId) {
   // 假設 /api/check-stock 是用來檢查商品庫存的 API
-  fetch(`/api/check-stock/${productId}`)
+  fetch(`/products/stock/${productId}`)
     .then(response => response.json())
     .then(data => {
       if (data.stock > 0) {
@@ -118,4 +118,8 @@ function removeFromCart(productId) {
   cart = cart.filter(item => item.id !== productId); // 過濾掉要移除的商品
   localStorage.setItem('cart', JSON.stringify(cart)); // 更新 localStorage
   updateCartDisplay(); // 更新購物車顯示
+}
+
+function showItem(itemName) {
+    document.getElementById(itemName).style.display = 'block';
 }
