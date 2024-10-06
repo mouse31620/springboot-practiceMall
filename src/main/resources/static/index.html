@@ -35,7 +35,6 @@
         <li class="nav-item dropdown" id="manageDropdown" style="display: none;">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown" id="manageDropdown-menu">
-            <li><a class="dropdown-item" href="#">All Products</a></li>
           </ul>
         </li>
       </ul>
@@ -54,8 +53,20 @@
         <!-- 下拉購物車 -->
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cartDropdown" style="min-width: 300px;">
           <li><h6 class="dropdown-header">購物車內容</h6></li>
-          <li id="cart-items">
-            <p class="dropdown-item">購物車目前是空的</p>
+          <li id="cart-table">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>商品名稱</th>
+                  <th>價格</th>
+                  <th>數量</th>
+                  <th>小計</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="cart-items">
+              </tbody>
+            </table>
           </li>
           <li><hr class="dropdown-divider"></li>
           <li>
@@ -152,6 +163,8 @@
 <script>
   let currentPage = 1;
   let itemsPerPage = 5;
+  let productList;
+
 
   function fetchProducts() {
     const category = document.getElementById('categoryFilter').value;
@@ -198,23 +211,25 @@
     if (userAuthorities) {
       const manageDropdownMenu = document.getElementById('manageDropdown-menu');
       showItem('manageDropdown');
-      if (userAuthorities.includes('PRODUCT_MANAGE') {
-          manageDropdownMenu.innerHTML = `
+      if (userAuthorities.includes('PRODUCT_MANAGE')) {
+          manageDropdownMenu.innerHTML += `
                 <li><a class="dropdown-item" href="manageProducts.html" >Manage Products</a></li>
           `;
       }
-      if (userAuthorities.includes('ORDER_MANAGE') {
-          manageDropdownMenu.innerHTML = `
+      if (userAuthorities.includes('ORDER_MANAGE')) {
+          manageDropdownMenu.innerHTML += `
                 <li><a class="dropdown-item" href="manageOrders.html" >Manage Orders</a></li>
           `;
       }
-      if (userAuthorities.includes('USER_MANAGE') {
-          manageDropdownMenu.innerHTML = `
+      if (userAuthorities.includes('USER_MANAGE')) {
+          manageDropdownMenu.innerHTML += `
                 <li><a class="dropdown-item" href="manageUsers.html" >Manage Users</a></li>
           `;
       }
+
     }
     fetchProducts();
+    updateCartDisplay();
   });
 
   function logout() {
@@ -234,7 +249,8 @@
   }
 
   function renderProductList(products) {
-    const productList = document.getElementById('productList');
+    productList = products;
+    const productListHTML = document.getElementById('productList');
     products.forEach(product => {
       const productHTML = `
         <div class="col mb-5">
@@ -249,7 +265,7 @@
             </div>
           </div>
         </div>`;
-      productList.innerHTML += productHTML;
+      productListHTML.innerHTML += productHTML;
     });
   }
 

@@ -78,4 +78,12 @@ public class ProductServiceImpl implements ProductService {
                 .fetchFirst();
         return (count != null)? count : 0L;
     }
+
+    @Override
+    public Integer getProductStockById(Long productId) {
+
+        return productRepository.findById(productId)
+                .map(Product::getStock)  // 假設 `Product` 有 `getStock()` 方法
+                .orElseThrow(() -> new RuntimeException("未找到該商品"));
+    }
 }

@@ -72,4 +72,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
 
     }
+
+    @GetMapping("/products/stock/{productId}")
+    public ResponseEntity<Integer> getProductStock(@PathVariable Long productId) {
+        Integer stock = productService.getProductStockById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(stock);
+    }
 }

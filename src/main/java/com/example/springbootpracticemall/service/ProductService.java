@@ -15,4 +15,6 @@ public interface ProductService {
     Product createProduct(ProductRequest productRequest);
 
     long getProductsCount(ProductQueryParam param);
+
+    Integer getProductStockById(Long productId);
 }
