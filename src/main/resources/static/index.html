@@ -118,25 +118,6 @@
   </div>
 
   <div class="container px-4 px-lg-5 mt-5">
-    <!-- 新增產品區域 -->
-    <div id="addProductForm" style="display: none;" class="my-4">
-      <h3>新增產品</h3>
-      <form id="productForm">
-        <div class="mb-3">
-          <label for="productName" class="form-label">產品名稱</label>
-          <input type="text" class="form-control" id="productName" required>
-        </div>
-        <div class="mb-3">
-          <label for="productPrice" class="form-label">價格</label>
-          <input type="number" class="form-control" id="productPrice" required>
-        </div>
-        <div class="mb-3">
-          <label for="productImage" class="form-label">產品圖片網址</label>
-          <input type="text" class="form-control" id="productImage" required>
-        </div>
-        <button type="submit" class="btn btn-primary">提交</button>
-      </form>
-    </div>
     <!-- 商品列表 -->
     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center" id="productList">
 
@@ -169,6 +150,7 @@
   function fetchProducts() {
     const category = document.getElementById('categoryFilter').value;
     const search = document.getElementById('nameSearch').value;
+    itemsPerPage = document.getElementById('itemsPerPage').value;
     let url = new URL('/products', window.location.origin);
     url.searchParams.append('category', category);
     url.searchParams.append('search', search);
@@ -187,47 +169,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     debugger
-    const userInfoCookie = getCookie("userInfo");
-    let userName, userAuthorities;
-    if (userInfoCookie) {
-      const jsonUserInfo = JSON.parse(userInfoCookie);
-      userName = jsonUserInfo.userName;
-      userAuthorities = jsonUserInfo.authorities
-    }
-    const loginButton = document.getElementById('login-button');
-    const logoutButton = document.getElementById('logout-button')
-    const userInfo = document.getElementById('user-info')
-
-    if (userName) {
-      // 使用者已登入，顯示使用者資訊
-      userInfo.innerText = "Hello : " + userName;
-      loginButton.href = 'userProfile.html'; // 改成會員資訊頁面的連結
-      logoutButton.innerHTML =
-              `<button class="btn btn-light" type="button" onclick="logout()">
-                  <i class="bi bi-door-open-fill"></i>
-                  logout
-               </button>`;
-    }
-    if (userAuthorities) {
-      const manageDropdownMenu = document.getElementById('manageDropdown-menu');
-      showItem('manageDropdown');
-      if (userAuthorities.includes('PRODUCT_MANAGE')) {
-          manageDropdownMenu.innerHTML += `
-                <li><a class="dropdown-item" href="manageProducts.html" >Manage Products</a></li>
-          `;
-      }
-      if (userAuthorities.includes('ORDER_MANAGE')) {
-          manageDropdownMenu.innerHTML += `
-                <li><a class="dropdown-item" href="manageOrders.html" >Manage Orders</a></li>
-          `;
-      }
-      if (userAuthorities.includes('USER_MANAGE')) {
-          manageDropdownMenu.innerHTML += `
-                <li><a class="dropdown-item" href="manageUsers.html" >Manage Users</a></li>
-          `;
-      }
-
-    }
+    initUserInfo();
     fetchProducts();
     updateCartDisplay();
   });
@@ -267,25 +209,6 @@
         </div>`;
       productListHTML.innerHTML += productHTML;
     });
-  }
-
-  function renderPagination(totalItems, totalPages) {
-      const pagination = document.getElementById('pagination');
-      pagination.innerHTML = ''; // 清空分頁
-
-      for (let i = 1; i <= totalPages; i++) {
-        const pageItem = `
-          <li class="page-item ${i === currentPage ? 'active' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
-          </li>`;
-        pagination.innerHTML += pageItem;
-      }
-  }
-
-  // 切換頁碼
-  function changePage(page) {
-    currentPage = page;
-    fetchProducts();
   }
 </script>
 </body>

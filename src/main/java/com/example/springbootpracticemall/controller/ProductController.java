@@ -35,8 +35,8 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<Page<Product>> getProducts(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "") String category,
+            @RequestParam(defaultValue = "") String search,
             @RequestParam(defaultValue = "createdDate") String orderBy,
             @RequestParam(defaultValue = "desc") String sort,
             @RequestParam(defaultValue = "12") @Max(100) @Min(0) Integer pageSize,
@@ -54,7 +54,7 @@ public class ProductController {
         List<Product> productList = productService.getProducts(productQueryParam);
         long totalCount = productService.getProductsCount(productQueryParam);
         //偷懶不換成double的無條件進位寫法
-        Integer totalPages = ((int)totalCount + pageSize - 1)/pageSize;
+        int totalPages = totalCount == 0 ? 1 : ((int)totalCount + pageSize - 1)/pageSize;
         Page<Product> page = Page.<Product>builder()
                 .pageSize(pageSize)
                 .pageNumber(pageNumber)

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用者管理</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">All Products</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#">Popular Items</a></li>
+                        <li><a class="dropdown-item" href="#">New Arrivals</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown" id="manageDropdown" style="display: none;">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown" id="manageDropdown-menu">
+                    </ul>
+                </li>
+            </ul>
+            <div id="user-info" class="nav-item">未登入</div>
+            <a href="login.html" id="login-button">
+                <button class="btn btn-light">
+                    <i class="bi-person-circle" ></i>
+                </button>
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" id="cartDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi-cart-fill me-2"></i>
+                    Cart
+                    <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart-count">0</span>
+                </button>
+                <!-- 下拉購物車 -->
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cartDropdown" style="min-width: 300px;">
+                    <li><h6 class="dropdown-header">購物車內容</h6></li>
+                    <li id="cart-table">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>商品名稱</th>
+                                <th>價格</th>
+                                <th>數量</th>
+                                <th>小計</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="cart-items">
+                            </tbody>
+                        </table>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <h6 class="dropdown-header">總價: $<span id="total-price">0</span></h6>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-center" href="checkout.html">前往結帳</a>
+                    </li>
+                </ul>
+            </div>
+            <div id="logout-button">
+            </div>
+        </div>
+    </div>
+</nav>
+<section class="py-5">
+    <div class="container mt-5">
+        <h1>使用者管理</h1>
+        <div class="mb-3">
+            <button class="btn btn-primary" onclick="showAddUserForm()">新增使用者</button>
+        </div>
+        <!-- 新增使用者表單 -->
+        <div id="addUserForm" style="display: none;" class="my-4">
+            <h3>新增使用者</h3>
+            <form id="userForm">
+                <div class="mb-3">
+                    <label for="userName" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="userName" name="userName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    <div id="passwordError" class="text-danger" style="display: none;">
+                        Passwords do not match.
+                    </div>
+                </div>
+                <div>
+                    <label for="customerType" class="form-label">會員等級</label>
+                    <select class="form-control" id="customerType" name="customerType" required>
+                        <option value="">請選擇</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="role" class="form-label">使用者腳色</label>
+                    <select class="form-control" id="role" name="role" required>
+                        <option value="">請選擇</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-success">提交</button>
+                    <button type="button" class="btn btn-danger" onclick="cancelAdd();">取消</button>
+                </div>
+            </form>
+        </div>
+        <!-- 修改使用者-->
+        <div id="editUserForm" style="display: none;" class="my-4">
+            <h3>編輯產品</h3>
+            <form id="editForm">
+                <input type="hidden" id="editUserId">
+                <div class="mb-3">
+                    <label for="editUserName" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="editUserName" name="editUserName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="editEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editEmail" name="editEmail" required>
+                </div>
+                <div>
+                    <label for="editCustomerType" class="form-label">會員等級</label>
+                    <select class="form-control" id="editCustomerType" name="editCustomerType" required>
+                        <option value="">請選擇</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="editRole" class="form-label">使用者腳色</label>
+                    <select class="form-control" id="editRole" name="editRole" required>
+                        <option value="">請選擇</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">提交修改</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">取消</button>
+            </form>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="customerTypeFilter" class="form-label">會員等級</label>
+                <select id="customerTypeFilter" class="form-select">
+                    <option value="">全部等級</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="roleFilter" class="form-label">會員角色</label>
+                <select id="roleFilter" class="form-select">
+                    <option value="">全部腳色</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="nameSearch" class="form-label">使用者名稱搜尋</label>
+                <input type="text" id="nameSearch" class="form-control" placeholder="輸入使用者名稱">
+            </div>
+            <div class="col-md-3">
+                <label for="itemsPerPage" class="form-label">每頁顯示</label>
+                <select id="itemsPerPage" class="form-select">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 人員列表 -->
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>使用者名稱</th>
+                <th>email</th>
+                <th>價格</th>
+                <th>會員等級</th>
+                <th>使用者腳色</th>
+            </tr>
+            </thead>
+            <tbody id="userList"></tbody>
+        </table>
+        <!-- 分頁控制 -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+
+        <!-- 查詢出的總筆數 -->
+        <div class="mt-3">
+            <p>總筆數: <span id="totalItems">0</span></p>
+        </div>
+    </div>
+</section>
+
+
+<!-- 引入 Bootstrap JS 和自定義 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/scripts.js"></script>
+<script>
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+        let password = document.getElementById('password').value;
+        let confirmPassword = document.getElementById('confirmPassword').value;
+        let passwordError = document.getElementById('passwordError');
+
+        if (password !== confirmPassword) {
+          passwordError.style.display = 'block';
+        } else {
+          passwordError.style.display = 'none';
+        }
+    });
+    let currentPage = 1;
+    let itemsPerPage = 5;
+    // 頁面載入時取得使用者列表
+    document.addEventListener('DOMContentLoaded', function() {
+        showCustomerTypeOption('customerType');
+        showCustomerTypeOption('editCustomerType');
+        showCustomerTypeOption('customerTypeFilter');
+        showRoleOption('role');
+        showRoleOption('editRole');
+        showRoleOption('roleFilter');
+        initUserInfo();
+        fetchUsers();
+    });
+
+    function showCustomerTypeOption(customerType) {
+        fetch('/customerTypes') // 發送請求到後端 API
+        .then(response => response.json())
+        .then(types => {
+            const select = document.getElementById(customerType);
+
+            types.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type.id;  // 設定 option 的 value
+                option.text = type.typeChinese; // 設定 option 的顯示文字
+                select.appendChild(option);  // 將 option 加入 select 中
+            });
+        })
+        .catch(error => console.error('Error fetching categories:', error));
+    }
+
+    function showRoleOption(roleSelect) {
+        fetch('/roles') // 發送請求到後端 API
+        .then(response => response.json())
+        .then(roles => {
+            const select = document.getElementById(roleSelect);
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.id;  // 設定 option 的 value
+                option.text = role.chineseName; // 設定 option 的顯示文字
+                select.appendChild(option);  // 將 option 加入 select 中
+            });
+        })
+        .catch(error => console.error('Error fetching roles:', error));
+    }
+
+    // 顯示新增使用者表單
+    function showAddUserForm() {
+        document.getElementById('addUserForm').style.display = 'block';
+    }
+
+    // 新增人員功能
+    document.getElementById('userForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const userName = document.getElementById('userName').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const customerType = document.getElementById('customerType').value;
+
+        if (password !== confirmPassword) {
+          document.getElementById('passwordError').style.display = 'block';
+          return;
+        }
+
+        const userData = {
+        userName: userName, email: email,
+        password: password ,
+        customerType: customerType
+        };
+
+        // 新增人員請求
+        fetch('/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert('新增成功！');
+          fetchUsers(); // 重新取得人員列表
+          document.getElementById('addUserForm').reset();
+          document.getElementById('addUserForm').style.display = 'none';
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // 取消編輯，隱藏編輯表單
+    function cancelAdd() {
+      document.getElementById('addUserForm').style.display = 'none';
+      document.getElementById('userForm').reset(); // 重置表單
+    }
+
+    // 取得人員列表
+    function fetchUsers() {
+        const customerType = document.getElementById('customerTypeFilter').value;
+        const role = document.getElementById('roleFilter').value;
+        const search = document.getElementById('nameSearch').value;
+        itemsPerPage = document.getElementById('itemsPerPage').value;
+        let url = new URL('/users', window.location.origin);
+        url.searchParams.append('customerType', customerType);
+        url.searchParams.append('role', role);
+        url.searchParams.append('search', search);
+        url.searchParams.append('pageNumber', currentPage);
+        url.searchParams.append('pageSize', itemsPerPage);
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const userList = document.getElementById('userList');
+          userList.innerHTML = '';
+          data.result.forEach(user => {
+            const userHTML = `
+              <tr>
+                <td>${user.userName}</td>
+                <td>${user.email}</td>
+                <td>${user.customerType}</td>
+                <td>${user.role}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" onclick="editUser(${user.id})">編輯</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">刪除</button>
+                </td>
+              </tr>`;
+            userList.innerHTML += userHTML;
+          });
+        })
+        .catch(error => console.error('Error fetching users:', error));
+    }
+
+    // 刪除人員
+    function deleteUser(userId) {
+      if (confirm('確定要刪除該使用者嗎？')) {
+        fetch(`/users/${userId}`, {
+          method: 'DELETE'
+        })
+        .then(response => {
+          alert('使用者刪除成功！');
+          fetchUsers(); // 重新取得使用者列表
+        })
+        .catch(error => console.error('Error deleting user:', error));
+      }
+    }
+
+    // 編輯使用者功能（可根據需要擴展）
+    function editUser(userId) {
+      // 可跳轉到編輯頁面，或打開編輯表單
+      alert('編輯功能尚未實作');
+    }
+
+    // 取消編輯，隱藏編輯表單
+    function cancelEdit() {
+      document.getElementById('editUserForm').style.display = 'none';
+      document.getElementById('editForm').reset(); // 重置表單
+    }
+</script>
+</body>
+</html>

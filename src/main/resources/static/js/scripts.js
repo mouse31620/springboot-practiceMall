@@ -11,6 +11,68 @@ function getCookie(name) {
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
+function initUserInfo() {
+    const userInfoCookie = getCookie("userInfo");
+    let userName, userAuthorities;
+    if (userInfoCookie) {
+      const jsonUserInfo = JSON.parse(userInfoCookie);
+      userName = jsonUserInfo.userName;
+      userAuthorities = jsonUserInfo.authorities
+    }
+    const loginButton = document.getElementById('login-button');
+    const logoutButton = document.getElementById('logout-button')
+    const userInfo = document.getElementById('user-info')
+
+    if (userName) {
+      // 使用者已登入，顯示使用者資訊
+      userInfo.innerText = "Hello : " + userName;
+      loginButton.href = 'userProfile.html'; // 改成會員資訊頁面的連結
+      logoutButton.innerHTML =
+              `<button class="btn btn-light" type="button" onclick="logout()">
+                  <i class="bi bi-door-open-fill"></i>
+                  logout
+               </button>`;
+    }
+    if (userAuthorities) {
+      const manageDropdownMenu = document.getElementById('manageDropdown-menu');
+      showItem('manageDropdown');
+      if (userAuthorities.includes('PRODUCT_MANAGE')) {
+          manageDropdownMenu.innerHTML += `
+                <li><a class="dropdown-item" href="manageProducts.html" >Manage Products</a></li>
+          `;
+      }
+      if (userAuthorities.includes('ORDER_MANAGE')) {
+          manageDropdownMenu.innerHTML += `
+                <li><a class="dropdown-item" href="manageOrders.html" >Manage Orders</a></li>
+          `;
+      }
+      if (userAuthorities.includes('USER_MANAGE')) {
+          manageDropdownMenu.innerHTML += `
+                <li><a class="dropdown-item" href="manageUsers.html" >Manage Users</a></li>
+          `;
+      }
+
+    }
+}
+
+function renderPagination(totalItems, totalPages) {
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = ''; // 清空分頁
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageItem = `
+          <li class="page-item ${i === currentPage ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+          </li>`;
+        pagination.innerHTML += pageItem;
+      }
+  }
+
+  // 切換頁碼
+  function changePage(page) {
+    currentPage = page;
+    fetchProducts();
+  }
 
 // 定義一個函數來獲取商品庫存數量
 async function getProductStock(productId) {
