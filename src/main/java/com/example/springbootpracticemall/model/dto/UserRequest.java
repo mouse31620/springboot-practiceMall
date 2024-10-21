@@ -7,13 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserRegisterRequest {
-
+public class UserRequest {
     @NotBlank
     private String userName;
     @NotBlank
     @Email
     private String email;
     @NotBlank
-    private String password;
+    private String customerTypeId;
+    @NotBlank
+    private String roleId;
 }

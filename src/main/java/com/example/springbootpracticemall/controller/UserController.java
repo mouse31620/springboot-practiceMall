@@ -130,4 +130,25 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("未登入");
     }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        UserDto userDto = UserDto.builder()
+                .id(String.valueOf(user.getId()))
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .customerType(String.valueOf(user.getCustomerType().getId()))
+                .role(String.valueOf(user.getUserRole().getId()))
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+    }
+
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<Void> updateProduct(@PathVariable Long userId,
+                                                 @RequestBody @Valid UserRequest userRequest){
+        userService.updateUser(userId, userRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
+
+    }
 }

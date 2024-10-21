@@ -4,6 +4,7 @@ package com.example.springbootpracticemall.service.impl;
 import com.example.springbootpracticemall.model.dto.UserDto;
 import com.example.springbootpracticemall.model.dto.UserQueryParam;
 import com.example.springbootpracticemall.model.dto.UserRegisterRequest;
+import com.example.springbootpracticemall.model.dto.UserRequest;
 import com.example.springbootpracticemall.model.entity.CustomerType;
 import com.example.springbootpracticemall.model.entity.QUser;
 import com.example.springbootpracticemall.model.entity.Role;
@@ -111,5 +112,30 @@ public class UserServiceImpl implements UserService {
                 .where(namePredicate, typePredicate, rolePredicate)
                 .fetchFirst();
         return count != null ? count : 0;
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("未找到該使用者"));
+    }
+
+    @Override
+    public User updateUser(Long userId, UserRequest userRequest) {
+        User existUser = getUserById(userId);
+        if (existUser != null) {
+            existUser.setUserName(userRequest.getUserName());
+            existUser.setEmail(userRequest.getEmail());
+            CustomerType customerType = new CustomerType();
+            customerType.setId(Long.valueOf(userRequest.getCustomerTypeId()));
+            existUser.setCustomerType(customerType);
+            Role role = new Role();
+            role.setId(Long.valueOf(userRequest.getRoleId()));
+            existUser.setUserRole(role);
+            userRepository.save(existUser);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "該名使用者不存在，請重新查詢");
+        }
+
+        return existUser;
     }
 }

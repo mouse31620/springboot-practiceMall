@@ -287,31 +287,31 @@
 
     // 顯示編輯表單並填充當前產品資料
     function editProduct(productId) {
-      fetch(`/products/${productId}`)
-        .then(response => response.json())
-        .then(product => {
-          document.getElementById('editProductId').value = product.id;
-          document.getElementById('editProductCategory').value = product.category;
-          document.getElementById('editProductName').value = product.productName;
-          document.getElementById('editProductPrice').value = product.price;
-          document.getElementById('editProductStock').value = product.stock;
-          document.getElementById('editProductImage').value = product.imageUrl;
+        fetch(`/products/${productId}`)
+            .then(response => response.json())
+            .then(product => {
+              document.getElementById('editProductId').value = product.id;
+              document.getElementById('editProductCategory').value = product.category;
+              document.getElementById('editProductName').value = product.productName;
+              document.getElementById('editProductPrice').value = product.price;
+              document.getElementById('editProductStock').value = product.stock;
+              document.getElementById('editProductImage').value = product.imageUrl;
 
-          document.getElementById('editProductForm').style.display = 'block';
-          document.getElementById('addProductForm').style.display = 'none'; // 隱藏新增商品表單
-        })
-        .catch(error => console.error('Error fetching product:', error));
+              document.getElementById('editProductForm').style.display = 'block';
+              document.getElementById('addProductForm').style.display = 'none'; // 隱藏新增商品表單
+            })
+            .catch(error => console.error('Error fetching product:', error));
     }
 
     // 提交編輯商品表單
-    document.getElementById('editForm').addEventListener('submit', function(event) {
+    document.getElementById('editProductForm').addEventListener('submit', function(event) {
       event.preventDefault();
 
       const productId = document.getElementById('editProductId').value;
       const productCategory = document.getElementById('editProductCategory').value
       const productName = document.getElementById('editProductName').value;
       const productPrice = document.getElementById('editProductPrice').value;
-      const productStock = document.getElementById('editProductStock').value = product.stock;
+      const productStock = document.getElementById('editProductStock').value;
       const productImage = document.getElementById('editProductImage').value;
 
       const updatedProduct = {
