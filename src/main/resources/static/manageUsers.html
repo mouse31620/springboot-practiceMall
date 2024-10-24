@@ -128,7 +128,7 @@
         </div>
         <!-- 修改使用者-->
         <div id="editUserForm" style="display: none;" class="my-4">
-            <h3>編輯產品</h3>
+            <h3>編輯使用者</h3>
             <form id="editForm">
                 <input type="hidden" id="editUserId">
                 <div class="mb-3">
@@ -139,13 +139,13 @@
                     <label for="editEmail" class="form-label">Email</label>
                     <input type="email" class="form-control" id="editEmail" name="editEmail" required>
                 </div>
-                <div>
+                <div class="mb-3">
                     <label for="editCustomerType" class="form-label">會員等級</label>
                     <select class="form-control" id="editCustomerType" name="editCustomerType" required>
                         <option value="">請選擇</option>
                     </select>
                 </div>
-                <div>
+                <div class="mb-3">
                     <label for="editRole" class="form-label">使用者腳色</label>
                     <select class="form-control" id="editRole" name="editRole" required>
                         <option value="">請選擇</option>
@@ -175,11 +175,16 @@
             </div>
             <div class="col-md-3">
                 <label for="itemsPerPage" class="form-label">每頁顯示</label>
-                <select id="itemsPerPage" class="form-select">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                </select>
+                <div class="d-flex align-items-center">
+                    <select id="itemsPerPage" class="form-select">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                    </select>
+                    <button class="btn btn-light" onclick="fetchUsers()">
+                        <i class="bi-search" ></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -251,7 +256,7 @@
                 select.appendChild(option);  // 將 option 加入 select 中
             });
         })
-        .catch(error => console.error('Error fetching categories:', error));
+        .catch(error => console.error('Error fetching customerType:', error));
     }
 
     function showRoleOption(roleSelect) {
