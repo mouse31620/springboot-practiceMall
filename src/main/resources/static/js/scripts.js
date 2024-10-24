@@ -11,6 +11,23 @@ function getCookie(name) {
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
+
+function logout() {
+    fetch('/users/logout', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => {
+        document.cookie = "jwt=; path=/; max-age=0; Secure;";
+        document.cookie = "userInfo=; path=/; max-age=0; Secure;";
+        window.location.href = "/index.html"
+      }).catch(error => {
+        console.error('Error:', error);
+        alert('Error during logout : ' + error.message);
+    })
+}
+
 function initUserInfo() {
     const userInfoCookie = getCookie("userInfo");
     let userName, userAuthorities;

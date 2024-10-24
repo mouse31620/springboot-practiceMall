@@ -174,22 +174,6 @@
     updateCartDisplay();
   });
 
-  function logout() {
-    fetch('/users/logout', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(() => {
-        document.cookie = "jwt=; path=/; max-age=0; Secure;";
-        document.cookie = "userInfo=; path=/; max-age=0; Secure;";
-        window.location.href = "/index.html"
-      }).catch(error => {
-        console.error('Error:', error);
-        alert('Error during logout : ' + error.message);
-    })
-  }
-
   function renderProductList(products) {
     productList = products;
     const productListHTML = document.getElementById('productList');
