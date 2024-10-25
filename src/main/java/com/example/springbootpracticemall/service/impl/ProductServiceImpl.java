@@ -13,7 +13,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -85,5 +87,18 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(productId)
                 .map(Product::getStock)  // 假設 `Product` 有 `getStock()` 方法
                 .orElseThrow(() -> new RuntimeException("未找到該商品"));
+    }
+
+    @Override
+    public Product updateProduct(Long productId, ProductRequest productRequest) {
+        Product existProduct = productRepository.findById(productId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "該筆產品不存在，請重新查詢"));
+        existProduct.setCategory(productRequest.getCategory());
+        existProduct.setProductName(productRequest.getProductName());
+        existProduct.setPrice(productRequest.getPrice());
+        existProduct.setStock(productRequest.getStock());
+        existProduct.setImageUrl(productRequest.getImageUrl());
+        existProduct.setDescription(productRequest.getDescription());
+        productRepository.save(existProduct);
+        return existProduct;
     }
 }

@@ -91,7 +91,9 @@
             <form id="productForm">
                 <div class="mb-3">
                     <label for="productCategory" class="form-label">產品種類</label>
-                    <input type="text" class="form-control" id="productCategory" required>
+                    <select class="form-control" id="productCategory" name="productCategory" required>
+                        <option value="">請選擇</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="productName" class="form-label">產品名稱</label>
@@ -109,6 +111,10 @@
                     <label for="productImage" class="form-label">產品圖片網址</label>
                     <input type="text" class="form-control" id="productImage" required>
                 </div>
+                <div class="mb-3">
+                    <label for="productDescription" class="form-label">產品描述</label>
+                    <input type="text" class="form-control" id="productDescription">
+                </div>
                 <button type="submit" class="btn btn-success">提交</button>
             </form>
         </div>
@@ -119,7 +125,9 @@
                 <input type="hidden" id="editProductId">
                 <div class="mb-3">
                     <label for="editProductCategory" class="form-label">產品種類</label>
-                    <input type="text" class="form-control" id="editProductCategory" required>
+                    <select class="form-control" id="editProductCategory" name="editProductCategory" required>
+                        <option value="">請選擇</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="editProductName" class="form-label">產品名稱</label>
@@ -137,6 +145,10 @@
                     <label for="editProductImage" class="form-label">產品圖片網址</label>
                     <input type="text" class="form-control" id="editProductImage" required>
                 </div>
+                <div class="mb-3">
+                    <label for="editProductDescription" class="form-label">產品描述</label>
+                    <input type="text" class="form-control" id="editProductDescription">
+                </div>
                 <button type="submit" class="btn btn-primary">提交修改</button>
                 <button type="button" class="btn btn-secondary" onclick="cancelEdit()">取消</button>
             </form>
@@ -147,9 +159,6 @@
                 <label for="categoryFilter" class="form-label">商品類別</label>
                 <select id="categoryFilter" class="form-select">
                     <option value="">全部類別</option>
-                    <option value="Category A">Category A</option>
-                    <option value="Category B">Category B</option>
-                    <option value="Category C">Category C</option>
                 </select>
             </div>
             <div class="col-md-4">
@@ -158,11 +167,16 @@
             </div>
             <div class="col-md-4">
                 <label for="itemsPerPage" class="form-label">每頁顯示</label>
-                <select id="itemsPerPage" class="form-select">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                </select>
+                <div class="d-flex align-items-center">
+                    <select id="itemsPerPage" class="form-select">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                    </select>
+                    <button class="btn btn-light" onclick="fetchProducts()">
+                        <i class="bi-search" ></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -203,6 +217,9 @@
     document.addEventListener('DOMContentLoaded', function() {
       initUserInfo();
       fetchProducts();
+      showProductCategoryOption('categoryFilter');
+      showProductCategoryOption('productCategory');
+      showProductCategoryOption('editProductCategory');
     });
 
     // 顯示新增商品表單
@@ -218,8 +235,15 @@
       const productPrice = document.getElementById('productPrice').value;
       const productStock = document.getElementById('productStock').value;
       const productImage = document.getElementById('productImage').value;
+      const productDescription = document.getElementById('productDescription').value;
 
-      const productData = { category: productCategory, productName: productName, price: productPrice, stock: productStock, imageUrl: productImage };
+      const productData = {
+          category: productCategory,
+          productName: productName,
+          price: productPrice,
+          stock: productStock,
+          imageUrl: productImage,
+          description : productDescription};
 
       // 新增商品請求
       fetch('/api/products', {
@@ -296,6 +320,7 @@
               document.getElementById('editProductPrice').value = product.price;
               document.getElementById('editProductStock').value = product.stock;
               document.getElementById('editProductImage').value = product.imageUrl;
+              document.getElementById('editProductDescription').value = product.description;
 
               document.getElementById('editProductForm').style.display = 'block';
               document.getElementById('addProductForm').style.display = 'none'; // 隱藏新增商品表單
@@ -313,13 +338,15 @@
       const productPrice = document.getElementById('editProductPrice').value;
       const productStock = document.getElementById('editProductStock').value;
       const productImage = document.getElementById('editProductImage').value;
+      const productDescription = document.getElementById('editProductDescription').value;
 
       const updatedProduct = {
         category: productCategory,
         productName: productName,
         price: productPrice,
         stock: productStock,
-        image: productImage
+        imageUrl: productImage,
+        description : productDescription
       };
 
       fetch(`/products/${productId}`, {
@@ -327,11 +354,16 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedProduct)
       })
-      .then(response => response.json())
-      .then(data => {
-        alert('產品更新成功！');
-        document.getElementById('editProductForm').style.display = 'none';
-        fetchProducts(); // 重新載入商品列表
+      .then(response => {
+        if (response.ok) {
+            alert('產品更新成功！');
+            document.getElementById('editProductForm').style.display = 'none';
+            fetchProducts(); // 重新載入商品列表
+        } else {
+            return response.json().then(error =>{
+                throw new Error(error.message)
+            })
+        }
       })
       .catch(error => console.error('Error updating product:', error));
     });

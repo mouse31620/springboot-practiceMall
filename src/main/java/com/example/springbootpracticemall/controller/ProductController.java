@@ -78,4 +78,11 @@ public class ProductController {
         Integer stock = productService.getProductStockById(productId);
         return ResponseEntity.status(HttpStatus.OK).body(stock);
     }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Void> updateProduct(@PathVariable Long productId,
+                                              @RequestBody @Valid ProductRequest productRequest) {
+        productService.updateProduct(productId, productRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

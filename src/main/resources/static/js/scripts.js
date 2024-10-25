@@ -233,3 +233,19 @@ function removeFromCart(event, productId) {
 function showItem(itemName) {
     document.getElementById(itemName).style.display = 'block';
 }
+
+function showProductCategoryOption(productCategory) {
+    fetch('/productCategories') // 發送請求到後端 API
+    .then(response => response.json())
+    .then(categories => {
+        const select = document.getElementById(productCategory);
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.optionValue;  // 設定 option 的 value
+            option.text = category.displayName; // 設定 option 的顯示文字
+            select.appendChild(option);  // 將 option 加入 select 中
+        });
+    })
+    .catch(error => console.error('Error fetching categories:', error));
+}

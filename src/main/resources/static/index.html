@@ -98,9 +98,6 @@
       <label for="categoryFilter" class="form-label">商品類別</label>
       <select id="categoryFilter" class="form-select">
         <option value="">全部類別</option>
-        <option value="Category A">Category A</option>
-        <option value="Category B">Category B</option>
-        <option value="Category C">Category C</option>
       </select>
     </div>
     <div class="col-md-4">
@@ -109,11 +106,16 @@
     </div>
     <div class="col-md-4">
       <label for="itemsPerPage" class="form-label">每頁顯示</label>
-      <select id="itemsPerPage" class="form-select">
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-      </select>
+      <div class="d-flex align-items-center">
+        <select id="itemsPerPage" class="form-select">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+        <button class="btn btn-light" onclick="fetchProducts()">
+          <i class="bi-search" ></i>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -172,11 +174,13 @@
     initUserInfo();
     fetchProducts();
     updateCartDisplay();
+    showProductCategoryOption('categoryFilter');
   });
 
   function renderProductList(products) {
     productList = products;
     const productListHTML = document.getElementById('productList');
+    productListHTML.innerHTML = "";
     products.forEach(product => {
       const productHTML = `
         <div class="col mb-5">
