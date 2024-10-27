@@ -5,6 +5,18 @@
 */
 // This file is intentionally blank
 // Use this file to add JavaScript to your project
+function loadHeader() {
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbar-placeholder').innerHTML = data;
+            // 在導航欄載入後執行初始化
+            initUserInfo();
+            updateCartDisplay();
+        })
+        .catch(error => console.error('Error loading navbar:', error));
+}
+
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -29,6 +41,7 @@ function logout() {
 }
 
 function initUserInfo() {
+    debugger
     const userInfoCookie = getCookie("userInfo");
     let userName, userAuthorities;
     if (userInfoCookie) {

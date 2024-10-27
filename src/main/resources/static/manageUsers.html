@@ -12,72 +12,7 @@
     <link href="css/styles.css" rel="stylesheet" />
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">All Products</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#">Popular Items</a></li>
-                        <li><a class="dropdown-item" href="#">New Arrivals</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown" id="manageDropdown" style="display: none;">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown" id="manageDropdown-menu">
-                    </ul>
-                </li>
-            </ul>
-            <div id="user-info" class="nav-item">未登入</div>
-            <a href="login.html" id="login-button">
-                <button class="btn btn-light">
-                    <i class="bi-person-circle" ></i>
-                </button>
-            </a>
-            <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" id="cartDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi-cart-fill me-2"></i>
-                    Cart
-                    <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart-count">0</span>
-                </button>
-                <!-- 下拉購物車 -->
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cartDropdown" style="min-width: 300px;">
-                    <li><h6 class="dropdown-header">購物車內容</h6></li>
-                    <li id="cart-table">
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>商品名稱</th>
-                                <th>價格</th>
-                                <th>數量</th>
-                                <th>小計</th>
-                                <th>操作</th>
-                            </tr>
-                            </thead>
-                            <tbody id="cart-items">
-                            </tbody>
-                        </table>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <h6 class="dropdown-header">總價: $<span id="total-price">0</span></h6>
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-center" href="checkout.html">前往結帳</a>
-                    </li>
-                </ul>
-            </div>
-            <div id="logout-button">
-            </div>
-        </div>
-    </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" id="navbar-placeholder">
 </nav>
 <section class="py-5">
     <div class="container mt-5">
@@ -233,13 +168,13 @@
     let itemsPerPage = 5;
     // 頁面載入時取得使用者列表
     document.addEventListener('DOMContentLoaded', function() {
+        loadHeader();
         showCustomerTypeOption('customerType');
         showCustomerTypeOption('editCustomerType');
         showCustomerTypeOption('customerTypeFilter');
         showRoleOption('role');
         showRoleOption('editRole');
         showRoleOption('roleFilter');
-        initUserInfo();
         fetchUsers();
     });
 

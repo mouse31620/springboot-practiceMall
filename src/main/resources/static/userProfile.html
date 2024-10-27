@@ -13,18 +13,7 @@
 </head>
 <body>
 <!-- Navigation (同樣可以引入你的導航欄元件) -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container px-4 px-lg-5">
-    <a class="navbar-brand" href="#">Start Bootstrap</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-        <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Home</a></li>
-      </ul>
-    </div>
-  </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" id="navbar-placeholder">
 </nav>
 
 <!-- User Profile Section -->
@@ -70,8 +59,10 @@
 <!-- Bootstrap core JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JS to handle API requests -->
+<script src="js/scripts.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    loadHeader();
     // 呼叫API獲取使用者資訊
     fetch('/users/profile', {
       method: 'GET',
@@ -79,13 +70,13 @@
         'Content-Type': 'application/json'
       }
     })
-            .then(response => response.json())
-            .then(data => {
-              document.getElementById('userName').textContent = data.userName;
-              document.getElementById('userEmail').textContent = data.email;
-              document.getElementById('userCustomerType').textContent = data.customerType;
-            })
-            .catch(error => console.error('Error fetching user info:', error));
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('userName').textContent = data.userName;
+      document.getElementById('userEmail').textContent = data.email;
+      document.getElementById('userCustomerType').textContent = data.customerType;
+    })
+    .catch(error => console.error('Error fetching user info:', error));
 
     //
     document.getElementById('confirmNewPassword').addEventListener('input', function() {
