@@ -41,7 +41,6 @@ function logout() {
 }
 
 function initUserInfo() {
-    debugger
     const userInfoCookie = getCookie("userInfo");
     let userName, userAuthorities;
     if (userInfoCookie) {

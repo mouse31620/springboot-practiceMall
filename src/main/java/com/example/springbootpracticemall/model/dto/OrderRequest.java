@@ -10,7 +10,7 @@ public class OrderRequest {
     @NotNull
     private Long orderUserId;
     @NotNull
-    private List<Long> products;
+    private List<OrderProductRequest> products;
     @NotNull
     private String receiverName;
     @NotNull

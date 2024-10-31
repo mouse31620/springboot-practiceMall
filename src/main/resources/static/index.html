@@ -110,7 +110,6 @@
   document.addEventListener('DOMContentLoaded', function() {
     loadHeader();
     fetchProducts();
-    updateCartDisplay();
     showProductCategoryOption('categoryFilter');
   });
 
@@ -126,7 +125,8 @@
             <div class="card-body p-4">
               <div class="text-center">
                 <h5 class="fw-bolder">${product.productName}</h5>
-                <p class="card-text">Price: $${product.price}</p>
+                <p class="card-text">價格: $${product.price}</p>
+                <p class="card-text">庫存: ${product.stock}</p>
                 <button class="btn btn-primary" onclick="addToCart(${product.id})">加入購物車</button>
               </div>
             </div>

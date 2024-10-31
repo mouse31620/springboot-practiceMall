@@ -287,6 +287,8 @@
               </tr>`;
             userList.innerHTML += userHTML;
           });
+          renderPagination(data.totalItems, data.totalPages);
+          document.getElementById('totalItems').textContent = data.totalItems;
         })
         .catch(error => console.error('Error fetching users:', error));
     }

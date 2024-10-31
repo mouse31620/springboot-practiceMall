@@ -32,12 +32,12 @@
                 <input type="text" class="form-control" id="receiverName" required>
             </div>
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" required>
+                <label for="receiverEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="receiverEmail" required>
             </div>
             <div class="mb-3">
-                <label for="address" class="form-label">地址</label>
-                <input type="text" class="form-control" id="address" required>
+                <label for="receiverAddress" class="form-label">地址</label>
+                <input type="text" class="form-control" id="receiverAddress" required>
             </div>
             <button type="button" class="btn btn-primary" onclick="submitOrder()">送出訂單</button>
         </form>
@@ -80,7 +80,10 @@
     // 提交訂單
     async function submitOrder() {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const productIds = cart.map(item => item.id); // 取得所有商品的 ID
+      const productIds = cart.map(item => ({
+          productId: item.id,
+          quantity: item.quantity
+      }));
       const orderPrice = parseInt(document.getElementById('order-price').textContent);
       const jsonUserInfo = JSON.parse(userInfoCookie);
 
@@ -106,13 +109,13 @@
         if (response.ok) {
           alert('訂單提交成功！');
           localStorage.removeItem('cart'); // 清空購物車
-          window.location.href = 'order-success.html'; // 跳轉到訂單成功頁面
+          window.location.href = 'orderSuccess.html'; // 跳轉到訂單成功頁面
         } else {
-          alert('訂單提交失敗，請稍後再試');
+          throw new Error('訂單提交失敗，請稍後再試');
         }
       } catch (error) {
         console.error('Error submitting order:', error);
-        alert('訂單提交失敗，請稍後再試');
+        alert(error.message);
       }
     }
 

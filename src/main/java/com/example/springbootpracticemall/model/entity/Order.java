@@ -2,28 +2,21 @@ package com.example.springbootpracticemall.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "order")
+@Table(name = "userOrder")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "order_product",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    @EqualsAndHashCode.Exclude
-    private Set<Product> products = new HashSet<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderProduct> orderProducts = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User orderUser;
@@ -35,8 +28,15 @@ public class Order {
     private String receiverAddress;
     @Column(name = "order_price")
     private Long orderPrice;
+    @Column(name = "order_state")
+    private String orderState;
     @Column(name = "created_date")
     private Date createdDate;
     @Column(name = "last_modified_date")
     private Date lastModifiedDate;
+
+    public void addProduct(Product product, Integer quantity) {
+        OrderProduct orderProduct = new OrderProduct(this, product, quantity);
+        orderProducts.add(orderProduct);
+    }
 }
