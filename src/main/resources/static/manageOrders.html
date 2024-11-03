@@ -73,7 +73,7 @@
                         <option value="10">10</option>
                         <option value="20">20</option>
                     </select>
-                    <button class="btn btn-light" onclick="fetchOrders()">
+                    <button class="btn btn-light" id="search-button">
                         <i class="bi-search" ></i>
                     </button>
                 </div>
@@ -117,6 +117,7 @@
 <script>
     let currentPage = 1;
     let itemsPerPage = 5;
+    const userId = (getQueryParam('userId') !== null && getQueryParam('userId') !== '') ? getQueryParam('userId') : 0;
     // 頁面載入時取得商品列表
     document.addEventListener('DOMContentLoaded', function() {
       loadHeader();
@@ -135,6 +136,7 @@
       const searchEndDate = document.getElementById('searchEndDate').value;
       const stateFilter = document.getElementById('stateFilter').value;
       let url = new URL('/orders', window.location.origin);
+      url.searchParams.append('userId', userId);
       url.searchParams.append('orderId', orderId);
       url.searchParams.append('searchStartDate', searchStartDate);
       url.searchParams.append('searchEndDate', searchEndDate);

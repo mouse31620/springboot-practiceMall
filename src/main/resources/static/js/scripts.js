@@ -24,6 +24,11 @@ function getCookie(name) {
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
 function logout() {
     fetch('/users/logout', {
       method: 'post',
@@ -42,15 +47,17 @@ function logout() {
 
 function initUserInfo() {
     const userInfoCookie = getCookie("userInfo");
-    let userName, userAuthorities;
+    let userName, userAuthorities, userId;
     if (userInfoCookie) {
       const jsonUserInfo = JSON.parse(userInfoCookie);
       userName = jsonUserInfo.userName;
-      userAuthorities = jsonUserInfo.authorities
+      userAuthorities = jsonUserInfo.authorities;
+      userId = jsonUserInfo.userId;
     }
     const loginButton = document.getElementById('login-button');
     const logoutButton = document.getElementById('logout-button')
     const userInfo = document.getElementById('user-info')
+    const orderButton = document.getElementById('order-button')
 
     if (userName) {
       // 使用者已登入，顯示使用者資訊
@@ -61,6 +68,12 @@ function initUserInfo() {
                   <i class="bi bi-door-open-fill"></i>
                   logout
                </button>`;
+      orderButton.href = 'manageOrders.html?userId=' + userId;
+      orderButton.innerHTML =
+              `<button class="btn btn-light" type="button" >
+                  <i class="bi-card-checklist"></i>
+               </button>`;
+
     }
     if (userAuthorities) {
       const manageDropdownMenu = document.getElementById('manageDropdown-menu');

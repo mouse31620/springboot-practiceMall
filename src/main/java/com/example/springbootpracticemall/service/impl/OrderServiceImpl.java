@@ -18,12 +18,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -36,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     ProductRepository productRepository;
 
     @Override
+    @Transactional
     public Order createOrder(OrderRequest orderRequest) {
         Order newOrder = new Order();
         User orderUser = new User();
@@ -45,19 +45,24 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setReceiverEmail(orderRequest.getReceiverEmail());
         newOrder.setReceiverAddress(orderRequest.getReceiverAddress());
         newOrder.setOrderPrice(orderRequest.getOrderPrice());
+
         orderRequest.getProducts().forEach(orderProductDto -> {
-            Product product = productRepository.findById(orderProductDto.getProductId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "無法找到 ID 為 " + orderProductDto.getProductId() + " 的產品"));
-            newOrder.addProduct(product, orderProductDto.getQuantity());
+            Product product = productRepository.findByIdWithLock(orderProductDto.getProductId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "無法找到 ID 為 " + orderProductDto.getProductId() + " 的產品"));
+
             Integer productStock = product.getStock();
-            productStock -= orderProductDto.getQuantity();
-            if (productStock > 0) {
-                product.setStock(productStock);
-                productRepository.save(product);
-            } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "商品[" + product.getProductName() +"]庫存不足，請重新選購商品");
+            System.out.println("測試 : " + productStock);
+            if (productStock < orderProductDto.getQuantity()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "商品[" + product.getProductName() +"]庫存不足，請重新選購商品");
             }
+
+            newOrder.addProduct(product, orderProductDto.getQuantity());
+            product.setStock(productStock - orderProductDto.getQuantity());
+            productRepository.save(product);
         });
+
         newOrder.setOrderState(OrderState.PENDING.name());
         Date now = new Date();
         newOrder.setCreatedDate(now);
@@ -79,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
     public long getOrderCount(OrderQueryParam orderQueryParam) {
         QOrder qOrder = QOrder.order;
         BooleanExpression orderIdPredicate = orderQueryParam.getOrderId() > 0 ? qOrder.id.eq(orderQueryParam.getOrderId()) : null;
-        BooleanExpression userIdPredicate = orderQueryParam.getOrderId() > 0 ? qOrder.orderUser.id.eq(orderQueryParam.getUserId()) : null;
+        BooleanExpression userIdPredicate = orderQueryParam.getUserId() > 0 ? qOrder.orderUser.id.eq(orderQueryParam.getUserId()) : null;
         BooleanExpression searchStartDatePredicate = orderQueryParam.getSearchStartDate() != null ? qOrder.createdDate.after(orderQueryParam.getSearchStartDate()) : null;
         BooleanExpression searchEndDatePredicate = orderQueryParam.getSearchEndDate() != null ? qOrder.createdDate.before(orderQueryParam.getSearchEndDate()) : null;
         BooleanExpression orderStatePredicate = !"".equals(orderQueryParam.getOrderState()) ? qOrder.orderState.eq(orderQueryParam.getOrderState()) : null;
@@ -94,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getOrders(OrderQueryParam orderQueryParam) {
         QOrder qOrder = QOrder.order;
         BooleanExpression orderIdPredicate = orderQueryParam.getOrderId() > 0 ? qOrder.id.eq(orderQueryParam.getOrderId()) : null;
-        BooleanExpression userIdPredicate = orderQueryParam.getOrderId() > 0 ? qOrder.orderUser.id.eq(orderQueryParam.getUserId()) : null;
+        BooleanExpression userIdPredicate = orderQueryParam.getUserId() > 0 ? qOrder.orderUser.id.eq(orderQueryParam.getUserId()) : null;
         BooleanExpression searchStartDatePredicate = orderQueryParam.getSearchStartDate() != null ? qOrder.createdDate.after(orderQueryParam.getSearchStartDate()) : null;
         BooleanExpression searchEndDatePredicate = orderQueryParam.getSearchEndDate() != null ? qOrder.createdDate.before(orderQueryParam.getSearchEndDate()) : null;
         BooleanExpression orderStatePredicate = !"".equals(orderQueryParam.getOrderState()) ? qOrder.orderState.eq(orderQueryParam.getOrderState()) : null;

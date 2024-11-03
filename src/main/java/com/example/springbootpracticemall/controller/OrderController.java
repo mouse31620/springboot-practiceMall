@@ -2,7 +2,6 @@ package com.example.springbootpracticemall.controller;
 
 import com.example.springbootpracticemall.model.dto.*;
 import com.example.springbootpracticemall.model.entity.Order;
-import com.example.springbootpracticemall.model.entity.Product;
 import com.example.springbootpracticemall.service.OrderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Validated
 @RestController
