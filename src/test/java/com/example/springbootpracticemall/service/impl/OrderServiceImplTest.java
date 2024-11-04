@@ -1,23 +1,17 @@
 package com.example.springbootpracticemall.service.impl;
 
-import ch.qos.logback.classic.Level;
 import com.example.springbootpracticemall.model.dto.OrderProductRequest;
 import com.example.springbootpracticemall.model.dto.OrderRequest;
 import com.example.springbootpracticemall.model.entity.Order;
 import com.example.springbootpracticemall.model.entity.Product;
-import com.example.springbootpracticemall.model.entity.User;
 import com.example.springbootpracticemall.repository.OrderRepository;
 import com.example.springbootpracticemall.repository.ProductRepository;
 import com.example.springbootpracticemall.service.OrderService;
 import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
