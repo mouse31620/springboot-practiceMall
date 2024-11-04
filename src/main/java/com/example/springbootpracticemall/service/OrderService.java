@@ -22,4 +22,6 @@ public interface OrderService {
 
     List<OrderProductResponse> getOrderProducts(Long orderId);
 
+    void deleteOrder(Long orderId);
+
 }

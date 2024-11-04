@@ -137,4 +137,19 @@ public class OrderServiceImpl implements OrderService {
                 .fetch();
 
     }
+
+    @Override
+    @Transactional
+    public void deleteOrder(Long orderId) {
+        Order order = orderRepository.findByIdWithLock(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "無法查到訂單編號為" + orderId + "的訂單"));
+        order.getOrderProducts().forEach(orderProduct -> {
+            Product product = productRepository.findByIdWithLock(orderProduct.getProduct().getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "產品未找到"));
+            int restoredStock = product.getStock() + orderProduct.getQuantity();
+            product.setStock(restoredStock);
+            productRepository.save(product);
+        });
+        orderRepository.delete(order);
+    }
 }

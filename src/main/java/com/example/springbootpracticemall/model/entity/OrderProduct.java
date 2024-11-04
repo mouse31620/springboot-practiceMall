@@ -2,9 +2,11 @@ package com.example.springbootpracticemall.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "order_product")
 public class OrderProduct {
     @Id
