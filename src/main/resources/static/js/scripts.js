@@ -5,11 +5,28 @@
 */
 // This file is intentionally blank
 // Use this file to add JavaScript to your project
+function loadHeader() {
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbar-placeholder').innerHTML = data;
+            // 在導航欄載入後執行初始化
+            initUserInfo();
+            updateCartDisplay();
+        })
+        .catch(error => console.error('Error loading navbar:', error));
+}
+
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
 }
 
 function logout() {
@@ -30,15 +47,17 @@ function logout() {
 
 function initUserInfo() {
     const userInfoCookie = getCookie("userInfo");
-    let userName, userAuthorities;
+    let userName, userAuthorities, userId;
     if (userInfoCookie) {
       const jsonUserInfo = JSON.parse(userInfoCookie);
       userName = jsonUserInfo.userName;
-      userAuthorities = jsonUserInfo.authorities
+      userAuthorities = jsonUserInfo.authorities;
+      userId = jsonUserInfo.userId;
     }
     const loginButton = document.getElementById('login-button');
     const logoutButton = document.getElementById('logout-button')
     const userInfo = document.getElementById('user-info')
+    const orderButton = document.getElementById('order-button')
 
     if (userName) {
       // 使用者已登入，顯示使用者資訊
@@ -49,6 +68,12 @@ function initUserInfo() {
                   <i class="bi bi-door-open-fill"></i>
                   logout
                </button>`;
+      orderButton.href = 'manageOrders.html?userId=' + userId;
+      orderButton.innerHTML =
+              `<button class="btn btn-light" type="button" >
+                  <i class="bi-card-checklist"></i>
+               </button>`;
+
     }
     if (userAuthorities) {
       const manageDropdownMenu = document.getElementById('manageDropdown-menu');

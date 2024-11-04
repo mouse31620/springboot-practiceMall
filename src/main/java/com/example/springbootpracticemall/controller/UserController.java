@@ -145,7 +145,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{userId}")
-    public ResponseEntity<Void> updateProduct(@PathVariable Long userId,
+    public ResponseEntity<Void> updateUser(@PathVariable Long userId,
                                                  @RequestBody @Valid UserRequest userRequest){
         userService.updateUser(userId, userRequest);
         return ResponseEntity.status(HttpStatus.OK).build();

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單管理</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" id="navbar-placeholder">
+</nav>
+<section class="py-5">
+    <!-- 訂單商品詳細信息 Modal -->
+    <div class="modal fade" id="orderProductsModal" tabindex="-1" aria-labelledby="orderProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderProductsModalLabel">訂單商品詳細資訊</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>產品名稱</th>
+                            <th>數量</th>
+                            <th>價錢</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderProductsTable">
+                        <!-- 商品資訊將動態插入此處 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <h1>訂單管理</h1>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="orderId" class="form-label">訂單編號</label>
+                <input type="text" id="orderId" class="form-control" placeholder="輸入訂單編號">
+            </div>
+            <div class="col-md-3">
+                <label for="searchStartDate" class="form-label">訂單日期區間</label>
+                <div class="d-flex align-items-center">
+                    <input type="text" id="searchStartDate" class="form-control datepicker" placeholder="選擇日期" autocomplete="off">
+                    <input type="text" id="searchEndDate" class="form-control datepicker" placeholder="選擇日期" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="stateFilter" class="form-label">訂單狀態</label>
+                <select id="stateFilter" class="form-select">
+                    <option value="">全部狀態</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="itemsPerPage" class="form-label">每頁顯示</label>
+                <div class="d-flex align-items-center">
+                    <select id="itemsPerPage" class="form-select">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                    </select>
+                    <button class="btn btn-light" id="search-button">
+                        <i class="bi-search" ></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品列表 -->
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>訂單編號</th>
+                <th>訂購人</th>
+                <th>收件者名稱</th>
+                <th>訂單商品</th>
+                <th>訂單總價</th>
+                <th>訂單日期</th>
+                <th>訂單狀態</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="orderList"></tbody>
+        </table>
+        <!-- 分頁控制 -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+
+        <!-- 查詢出的總筆數 -->
+        <div class="mt-3">
+            <p>總筆數: <span id="totalItems">0</span></p>
+        </div>
+    </div>
+</section>
+
+
+<!-- 引入 Bootstrap JS 和自定義 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="js/scripts.js"></script>
+<script>
+    let currentPage = 1;
+    let itemsPerPage = 5;
+    const userId = (getQueryParam('userId') !== null && getQueryParam('userId') !== '') ? getQueryParam('userId') : 0;
+    // 頁面載入時取得商品列表
+    document.addEventListener('DOMContentLoaded', function() {
+      loadHeader();
+      fetchOrders();
+      showOrderStateOption('stateFilter');
+      $('.datepicker').datepicker({
+        format: 'yyyy-mm-dd',  // 設定日期格式，方便後端解析
+        autoclose: true
+      });
+    });
+
+    // 取得商品列表
+    function fetchOrders() {
+      const orderId = document.getElementById('orderId').value;
+      const searchStartDate = document.getElementById('searchStartDate').value;
+      const searchEndDate = document.getElementById('searchEndDate').value;
+      const stateFilter = document.getElementById('stateFilter').value;
+      let url = new URL('/orders', window.location.origin);
+      url.searchParams.append('userId', userId);
+      url.searchParams.append('orderId', orderId);
+      url.searchParams.append('searchStartDate', searchStartDate);
+      url.searchParams.append('searchEndDate', searchEndDate);
+      url.searchParams.append('orderState', stateFilter);
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const orderList = document.getElementById('orderList');
+          orderList.innerHTML = '';
+          data.result.forEach(order => {
+            const orderHTML = `
+              <tr>
+                <td>${order.orderId}</td>
+                <td>${order.userName}</td>
+                <td>${order.receiverName}</td>
+                <td>
+                    <button class="btn btn-success btn-sm"
+                    onclick="showOrderProducts(${order.orderId})">
+                    訂單商品
+                    </button>
+                </td>
+                <td>$${order.orderPrice}</td>
+                <td>${order.createDate}</td>
+                <td>${order.orderState}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm" ${order.orderState !== 'PENDING' ? 'disabled' : ''} onclick="cancelOrder(${order.orderId})">取消訂單</button>
+                </td>
+              </tr>`;
+            orderList.innerHTML += orderHTML;
+          });
+          renderPagination(data.totalItems, data.totalPages);
+          document.getElementById('totalItems').textContent = data.totalItems;
+        })
+        .catch(error => console.error('Error fetching orders:', error));
+    }
+
+    // 刪除商品
+    function cancelOrder(orderId) {
+      if (confirm('確定要取消該訂單嗎？')) {
+        fetch(`/orders/${orderId}`, {
+          method: 'DELETE'
+        })
+        .then(response => {
+          alert('訂單取消成功！');
+          fetchOrders(); // 重新取得訂單列表
+        })
+        .catch(error => console.error('Error deleting order:', error));
+      }
+    }
+
+    function showOrderStateOption(orderState) {
+        fetch('/orderStates') // 發送請求到後端 API
+        .then(response => response.json())
+        .then(states => {
+            const select = document.getElementById(orderState);
+
+            states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state.optionValue;  // 設定 option 的 value
+                option.text = state.displayName; // 設定 option 的顯示文字
+                select.appendChild(option);  // 將 option 加入 select 中
+            });
+        })
+        .catch(error => console.error('Error fetching order state:', error));
+    }
+
+    async function showOrderProducts(orderId) {
+        try {
+            const response = await fetch(`/orders/${orderId}/products`);
+            const productList = await response.json();
+            // 清空現有商品列表
+            const orderProductsTable = document.getElementById('orderProductsTable');
+            orderProductsTable.innerHTML = '';
+            // 將每個商品的信息插入表格
+            productList.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.productName}</td>
+                    <td>${product.quantity}</td>
+                    <td>$${product.price}</td>
+                `;
+                orderProductsTable.appendChild(row);
+            });
+            const orderProductsModal = new bootstrap.Modal(document.getElementById('orderProductsModal'));
+            orderProductsModal.show();
+        } catch (error) {
+            console.error('載入產品失敗', error);
+            alert('無法載入訂單商品，請稍後再試');
+        }
+    }
+
+
+</script>
+</body>
+</html>

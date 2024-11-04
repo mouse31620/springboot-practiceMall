@@ -31,8 +31,9 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/index.html", "/header.html", "/login.html", "/register.html", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/**", "/orders/**").permitAll()
+                        .requestMatchers("/productCategories").permitAll()
                         .requestMatchers("/users/login", "/users/register").permitAll()
                         //產品管理權限
                         .requestMatchers(HttpMethod.POST, "/products/**").hasAuthority("PRODUCT_MANAGE")
