@@ -181,7 +181,7 @@
           description : productDescription};
 
       // 新增商品請求
-      fetch('/api/products', {
+      fetch('/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productData)
