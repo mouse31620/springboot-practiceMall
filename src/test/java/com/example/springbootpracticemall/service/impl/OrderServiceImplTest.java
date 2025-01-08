@@ -8,8 +8,10 @@ import com.example.springbootpracticemall.repository.OrderRepository;
 import com.example.springbootpracticemall.repository.ProductRepository;
 import com.example.springbootpracticemall.service.OrderService;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,6 +42,12 @@ public class OrderServiceImplTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    private RedissonClient redisson;
+
     @Test
     void verifyDatabaseType() throws SQLException {
         String databaseUrl = jdbcTemplate.getDataSource().getConnection().getMetaData().getURL();
@@ -55,6 +63,10 @@ public class OrderServiceImplTest {
         Product product = productRepository.findById(productId).orElseThrow();
         product.setStock(initialStock);
         productRepository.save(product);
+
+        // 設置Redis初始庫存
+        String stockRedisKey = "product:stock:" + productId;
+        redisTemplate.opsForValue().set(stockRedisKey, String.valueOf(initialStock));
 
         // 模擬並發創建訂單
         int numberOfThreads = 10;
@@ -87,6 +99,10 @@ public class OrderServiceImplTest {
         Product updatedProduct = productRepository.findById(productId).orElseThrow();
         int expectedStock = initialStock - (numberOfThreads * quantityPerOrder);
         assertEquals(expectedStock, updatedProduct.getStock(), "庫存減少不正確");
+
+        // 驗證 Redis 中的庫存值是否一致
+        String redisStock = redisTemplate.opsForValue().get(stockRedisKey);
+        assertEquals(String.valueOf(expectedStock), redisStock, "Redis 庫存值不正確");
 
         // 如果庫存不足，檢查拋出異常
         OrderRequest insufficientOrderRequest = new OrderRequest();
