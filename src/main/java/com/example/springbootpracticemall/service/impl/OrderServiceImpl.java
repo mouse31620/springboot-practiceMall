@@ -15,7 +15,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,12 @@ public class OrderServiceImpl implements OrderService {
     OrderRepository orderRepository;
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private RedissonClient redisson;
+
+    private static final String STOCK_KEY_PREFIX = "product:stock:";
 
     @Override
     @Transactional
@@ -47,20 +55,23 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setOrderPrice(orderRequest.getOrderPrice());
 
         orderRequest.getProducts().forEach(orderProductDto -> {
+            String redisKey = STOCK_KEY_PREFIX + orderProductDto.getProductId();
+
             Product product = productRepository.findByIdWithLock(orderProductDto.getProductId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                             "無法找到 ID 為 " + orderProductDto.getProductId() + " 的產品"));
 
             Integer productStock = product.getStock();
-            System.out.println("測試 : " + productStock);
             if (productStock < orderProductDto.getQuantity()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "商品[" + product.getProductName() +"]庫存不足，請重新選購商品");
+                        "商品 ID [" + orderProductDto.getProductId() +"]庫存不足，請重新選購商品");
             }
-
-            newOrder.addProduct(product, orderProductDto.getQuantity());
             product.setStock(productStock - orderProductDto.getQuantity());
             productRepository.save(product);
+            newOrder.addProduct(product, orderProductDto.getQuantity());
+            // 扣減庫存並更新 Redis
+            redisTemplate.opsForValue().set(redisKey, String.valueOf(product.getStock()));
+
         });
 
         newOrder.setOrderState(OrderState.PENDING.name());
@@ -149,6 +160,8 @@ public class OrderServiceImpl implements OrderService {
             int restoredStock = product.getStock() + orderProduct.getQuantity();
             product.setStock(restoredStock);
             productRepository.save(product);
+            String redisKey = STOCK_KEY_PREFIX + product.getId();
+            redisTemplate.opsForValue().set(redisKey, String.valueOf(product.getStock()));
         });
         orderRepository.delete(order);
     }

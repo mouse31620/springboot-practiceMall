@@ -13,6 +13,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,6 +31,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    private static final String STOCK_KEY_PREFIX = "product:stock:";
 
     @Override
     public Product getProductById(Long productId) {
@@ -66,6 +74,11 @@ public class ProductServiceImpl implements ProductService {
         product.setCreatedDate(now);
         product.setLastModifiedDate(now);
         productRepository.save(product);
+
+        // 將庫存寫入Redis
+        String redisKey = STOCK_KEY_PREFIX + product.getId();
+        redisTemplate.opsForValue().set(redisKey, String.valueOf(product.getStock()));
+
         return product;
     }
 
@@ -83,10 +96,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Integer getProductStockById(Long productId) {
+        String redisKey = STOCK_KEY_PREFIX + productId;
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
-        return productRepository.findById(productId)
-                .map(Product::getStock)  // 假設 `Product` 有 `getStock()` 方法
+        //先從Redis查詢庫存
+        String stockStr = valueOperations.get(redisKey);
+        if (stockStr != null) {
+            return Integer.parseInt(stockStr);
+        }
+
+        Integer stock = productRepository.findById(productId)
+                .map(Product::getStock)
                 .orElseThrow(() -> new RuntimeException("未找到該商品"));
+
+        valueOperations.set(redisKey, String.valueOf(stock));
+
+        return stock;
     }
 
     @Override
@@ -99,6 +124,11 @@ public class ProductServiceImpl implements ProductService {
         existProduct.setImageUrl(productRequest.getImageUrl());
         existProduct.setDescription(productRequest.getDescription());
         productRepository.save(existProduct);
+
+        // 更新Redis中的庫存
+        String redisKey = STOCK_KEY_PREFIX + existProduct.getId();
+        redisTemplate.opsForValue().set(redisKey, String.valueOf(existProduct.getStock()));
+
         return existProduct;
     }
 }
